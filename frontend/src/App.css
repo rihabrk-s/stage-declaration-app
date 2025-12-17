@@ -1,0 +1,42 @@
+/* Animations du logo */
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animation pour le logo si réduction du mouvement non demandée */
+@media (prefers-reduced-motion: no-preference) {
+  .logo-spin {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+/* Drop shadows au hover du logo */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+/* Style minimal des cartes */
+.card {
+  padding: 2em;
+}
+
+/* Style des liens "Read the docs" par défaut */
+.read-the-docs {
+  color: #888;
+}
