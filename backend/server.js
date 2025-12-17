@@ -1,10 +1,14 @@
+import dotenv from "dotenv";
+dotenv.config(); // Doit être en tout début
+
+console.log("DB_USER =", process.env.DB_USER);
+console.log("DB_PASSWORD =", process.env.DB_PASSWORD);
+
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import stagesRoutes from "./src/routes/stages.js";
 import usersRoutes from "./src/routes/users.js";
-
-dotenv.config();
 
 const app = express();
 app.use(cors());
