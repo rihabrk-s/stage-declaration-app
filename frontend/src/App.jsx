@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import StudentDeclare from "./pages/StudentDeclare";
 import StudentStatus from "./pages/StudentStatus";
@@ -8,14 +8,21 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        {/* Layout Home avec onglets */}
+        <Route path="/" element={<Home />}>
+          {/* Page par défaut : étudiant */}
+          <Route index element={<Navigate to="/etudiant/declaration" replace />} />
 
-        {/* Étudiant */}
-        <Route path="/etudiant/declaration" element={<StudentDeclare />} />
+          {/* Contenu affiché dans <Outlet /> */}
+          <Route path="etudiant/declaration" element={<StudentDeclare />} />
+          <Route path="admin/stages" element={<AdminStages />} />
+        </Route>
+
+        {/* Page statut étudiante hors layout */}
         <Route path="/etudiant/statut" element={<StudentStatus />} />
 
-        {/* Administration */}
-        <Route path="/admin/stages" element={<AdminStages />} />
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

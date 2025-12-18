@@ -2,8 +2,8 @@ import db from "../config/db.js";
 
 export const createStage = async ({ id_etudiant, entreprise, sujet, date_debut, date_fin }) => {
   const [result] = await db.query(
-    `INSERT INTO stages (id_etudiant, entreprise, sujet, date_debut, date_fin)
-     VALUES (?, ?, ?, ?, ?)`,
+    `INSERT INTO stages (id_etudiant, entreprise, sujet, date_debut, date_fin, statut)
+     VALUES (?, ?, ?, ?, ?, 'en_attente')`,
     [id_etudiant, entreprise, sujet, date_debut, date_fin]
   );
   const [rows] = await db.query("SELECT * FROM stages WHERE id = ?", [result.insertId]);
@@ -12,9 +12,11 @@ export const createStage = async ({ id_etudiant, entreprise, sujet, date_debut, 
 
 export const getStagesByEmail = async (email) => {
   const [rows] = await db.query(
-    `SELECT s.* FROM stages s
+    `SELECT s.*
+     FROM stages s
      JOIN users u ON u.id = s.id_etudiant
-     WHERE u.email = ?`,
+     WHERE u.email = ?
+     ORDER BY s.id DESC`,
     [email]
   );
   return rows;
