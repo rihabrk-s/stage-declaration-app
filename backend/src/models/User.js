@@ -1,29 +1,34 @@
 import db from "../config/db.js";
 
 export const findOrCreateUser = async ({ nom, email, role = "etudiant" }) => {
-  const conn = await db.getConnection();
   try {
-    await conn.beginTransaction();
-
-    const [rows] = await conn.query("SELECT * FROM users WHERE email = ?", [email]);
+    // Vérifier si l'utilisateur existe déjà
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
     if (rows.length) {
-      await conn.commit();
       return rows[0];
     }
 
-    const [res] = await conn.query(
+    // Créer l'utilisateur
+    const [res] = await db.query(
       "INSERT INTO users (nom, email, role) VALUES (?, ?, ?)",
       [nom, email, role]
     );
-    const [created] = await conn.query("SELECT * FROM users WHERE id = ?", [res.insertId]);
-    await conn.commit();
+
+    // Récupérer l'utilisateur créé
+    const [created] = await db.query("SELECT * FROM users WHERE id = ?", [res.insertId]);
     return created[0];
-  } finally {
-    conn.release();
+  } catch (err) {
+    console.error("Erreur findOrCreateUser:", err);
+    throw err;
   }
 };
 
 export const findUserById = async (id) => {
-  const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [id]);
-  return rows[0];
+  try {
+    const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [id]);
+    return rows[0];
+  } catch (err) {
+    console.error("Erreur findUserById:", err);
+    throw err;
+  }
 };

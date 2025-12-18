@@ -13,13 +13,21 @@ import {
  * body: { nom, email, entreprise, sujet, date_debut, date_fin }
  */
 export const declareStage = async (req, res) => {
+  console.log("Requête reçue :", req.body); // <-- pour vérifier ce qui arrive
+
   const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  if (!errors.isEmpty()) {
+    console.log("Erreurs de validation :", errors.array()); // <-- pour voir les erreurs de validation
+    return res.status(400).json({ errors: errors.array() });
+  }
 
   try {
     const { nom, email, entreprise, sujet, date_debut, date_fin } = req.body;
+    console.log("Données extraites :", { nom, email, entreprise, sujet, date_debut, date_fin }); // <-- pour vérifier ce qui sera utilisé
+
     // findOrCreate user
     const user = await findOrCreateUser({ nom, email, role: "etudiant" });
+    console.log("Utilisateur trouvé/créé :", user);
 
     const stage = await createStage({
       id_etudiant: user.id,
@@ -28,9 +36,11 @@ export const declareStage = async (req, res) => {
       date_debut: date_debut || null,
       date_fin: date_fin || null
     });
+    console.log("Stage créé :", stage);
+
     res.status(201).json({ stage });
   } catch (err) {
-    console.error(err);
+    console.error("Erreur catch :", err);
     res.status(500).json({ error: "Erreur serveur lors de la déclaration" });
   }
 };

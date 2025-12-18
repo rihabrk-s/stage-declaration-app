@@ -7,6 +7,7 @@ export default function StudentDeclare() {
   const [form, setForm] = useState({
     nom: "",
     prenom: "",
+    email: "",
     entreprise: "",
     sujet: "",
     dateDebut: "",
@@ -15,7 +16,8 @@ export default function StudentDeclare() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,6 +31,7 @@ export default function StudentDeclare() {
         body: JSON.stringify({
           nom: form.nom,
           prenom: form.prenom,
+          email: form.email, // <-- ajouté
           entreprise: form.entreprise,
           sujet: form.sujet,
           date_debut: form.dateDebut,
@@ -36,7 +39,10 @@ export default function StudentDeclare() {
         }),
       });
 
-      if (!response.ok) throw new Error("Impossible de déclarer le stage");
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Impossible de déclarer le stage");
+      }
 
       navigate("/student-status");
     } catch (err) {
@@ -48,20 +54,20 @@ export default function StudentDeclare() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-beige-50 p-6">
-      <div className="bg-white rounded-3xl shadow-xl w-full max-w-md p-10">
-        <h2 className="text-3xl font-bold text-brown-800 mb-8 text-center">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-12">
+        <h2 className="text-4xl font-extrabold text-brown-800 mb-10 text-center">
           Déclarez votre stage
         </h2>
 
         {error && (
-          <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-center font-medium">
+          <div className="bg-red-100 text-red-700 p-3 rounded-lg mb-6 text-center font-medium">
             {error}
           </div>
         )}
 
         <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
-          {/** Nom / Prénom */}
-          <div className="flex gap-4">
+          {/* Nom / Prénom */}
+          <div className="flex flex-col sm:flex-row gap-4">
             <input
               type="text"
               name="nom"
@@ -69,7 +75,7 @@ export default function StudentDeclare() {
               onChange={handleChange}
               placeholder="Nom"
               required
-              className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200 placeholder-gray-400"
+              className="flex-1 border border-gray-200 rounded-xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-100 placeholder-gray-400 shadow-sm"
             />
             <input
               type="text"
@@ -78,11 +84,22 @@ export default function StudentDeclare() {
               onChange={handleChange}
               placeholder="Prénom"
               required
-              className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200 placeholder-gray-400"
+              className="flex-1 border border-gray-200 rounded-xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-100 placeholder-gray-400 shadow-sm"
             />
           </div>
 
-          {/** Entreprise */}
+          {/* Email */}
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="Email"
+            required
+            className="border border-gray-200 rounded-xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-100 placeholder-gray-400 shadow-sm"
+          />
+
+          {/* Entreprise */}
           <input
             type="text"
             name="entreprise"
@@ -90,10 +107,10 @@ export default function StudentDeclare() {
             onChange={handleChange}
             placeholder="Entreprise"
             required
-            className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200 placeholder-gray-400"
+            className="border border-gray-200 rounded-xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-100 placeholder-gray-400 shadow-sm"
           />
 
-          {/** Sujet */}
+          {/* Sujet */}
           <input
             type="text"
             name="sujet"
@@ -101,18 +118,18 @@ export default function StudentDeclare() {
             onChange={handleChange}
             placeholder="Sujet du stage"
             required
-            className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200 placeholder-gray-400"
+            className="border border-gray-200 rounded-xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-100 placeholder-gray-400 shadow-sm"
           />
 
-          {/** Dates */}
-          <div className="flex gap-4">
+          {/* Dates */}
+          <div className="flex flex-col sm:flex-row gap-4">
             <input
               type="date"
               name="dateDebut"
               value={form.dateDebut}
               onChange={handleChange}
               required
-              className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              className="flex-1 border border-gray-200 rounded-xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-100 shadow-sm"
             />
             <input
               type="date"
@@ -120,24 +137,24 @@ export default function StudentDeclare() {
               value={form.dateFin}
               onChange={handleChange}
               required
-              className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              className="flex-1 border border-gray-200 rounded-xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-blue-100 shadow-sm"
             />
           </div>
 
-          {/** Bouton principal */}
+          {/* Bouton principal */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-200 hover:bg-blue-300 text-brown-900 font-semibold rounded-lg py-3 shadow-md transition duration-200 hover:scale-105"
+            className="w-full bg-blue-200 hover:bg-blue-300 text-brown-900 font-bold rounded-xl py-4 shadow-md transition duration-200 transform hover:scale-105 disabled:opacity-70"
           >
             {loading ? "Envoi..." : "Déclarer mon stage"}
           </button>
         </form>
 
-        {/** Bouton retour */}
+        {/* Bouton retour */}
         <button
           onClick={() => navigate("/")}
-          className="mt-6 w-full text-center text-blue-400 hover:underline font-medium"
+          className="mt-8 w-full text-center text-blue-400 hover:underline font-medium"
         >
           Retour à l'accueil
         </button>
