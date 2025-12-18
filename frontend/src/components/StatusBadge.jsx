@@ -1,34 +1,23 @@
 export default function StatusBadge({ status }) {
-  // sécurité : si status est vide
-  if (!status) {
+  const s = (status || "en_attente").toLowerCase();
+
+  if (s === "valide") {
     return (
-      <span className="inline-block px-3 py-1 rounded-full text-sm bg-gray-200 text-gray-700">
-        Inconnu
+      <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+        ✅ Validé
       </span>
     );
   }
-
-  const normalized = status.toLowerCase();
-
-  let label = "Inconnu";
-  let classes = "bg-gray-200 text-gray-700";
-
-  if (normalized === "en_attente") {
-    label = "En attente";
-    classes = "bg-yellow-100 text-yellow-800";
-  } else if (normalized === "valide") {
-    label = "Validé";
-    classes = "bg-green-100 text-green-800";
-  } else if (normalized === "refuse") {
-    label = "Refusé";
-    classes = "bg-red-100 text-red-800";
+  if (s === "refuse") {
+    return (
+      <span className="px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-100">
+        ❌ Refusé
+      </span>
+    );
   }
-
   return (
-    <span
-      className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${classes}`}
-    >
-      {label}
+    <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-100">
+      ⏳ En attente
     </span>
   );
 }

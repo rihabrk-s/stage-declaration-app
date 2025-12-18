@@ -1,122 +1,44 @@
-// backend/src/controllers/stagesController.js
-import { validationResult } from "express-validator";
+import db from "../config/db.js";
 
-import {
-  createStage,
-  getStagesByEmail,
-  getAllStages,
-  updateStageStatus,
-  getStageById,
-} from "../models/stageModel.js";
-
-import { findOrCreateUser } from "../models/userModel.js";
-
-/**
- * POST /api/stages
- * Body: { nom, prenom, email, entreprise, sujet, date_debut, date_fin }
- */
-export const declareStage = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ message: "Validation error", errors: errors.array() });
-  }
-
-  try {
-    const { nom, prenom, email, entreprise, sujet, date_debut, date_fin } = req.body;
-
-    // ✅ Trouver ou créer l'utilisateur étudiant
-    const user = await findOrCreateUser({
-      nom: `${nom} ${prenom || ""}`.trim(),
-      email,
-      role: "etudiant",
-    });
-
-    // ✅ Créer le stage lié à l'étudiant
-    const stage = await createStage({
-      id_etudiant: user.id,
-      entreprise,
-      sujet,
-      date_debut: date_debut || null,
-      date_fin: date_fin || null,
-    });
-
-    return res.status(201).json({ stage });
-  } catch (err) {
-    console.error("declareStage error:", err);
-    return res.status(500).json({ message: "Erreur serveur lors de la déclaration" });
-  }
+export const createStage = async ({ id_etudiant, entreprise, sujet, date_debut, date_fin }) => {
+  const [result] = await db.query(
+    `INSERT INTO stages (id_etudiant, entreprise, sujet, date_debut, date_fin, statut)
+     VALUES (?, ?, ?, ?, ?, 'en_attente')`,
+    [id_etudiant, entreprise, sujet, date_debut, date_fin]
+  );
+  const [rows] = await db.query("SELECT * FROM stages WHERE id = ?", [result.insertId]);
+  return rows[0];
 };
 
-/**
- * GET /api/stages
- * - Admin: liste tous les stages (si pas de query email)
- * - Étudiant: si ?email=... => renvoie ses stages
- */
-export const listAllStages = async (req, res) => {
-  try {
-    // ✅ IMPORTANT: compatibilité avec ton front StudentStatus
-    // StudentStatus appelle GET /api/stages?email=...
-    if (req.query.email) {
-      return getStagesForStudent(req, res);
-    }
-
-    const stages = await getAllStages();
-    return res.json({ stages });
-  } catch (err) {
-    console.error("listAllStages error:", err);
-    return res.status(500).json({ message: "Erreur serveur" });
-  }
+export const getStagesByEmail = async (email) => {
+  const [rows] = await db.query(
+    `SELECT s.*
+     FROM stages s
+     JOIN users u ON u.id = s.id_etudiant
+     WHERE u.email = ?
+     ORDER BY s.id DESC`,
+    [email]
+  );
+  return rows;
 };
 
-/**
- * GET /api/stages/student?email=...
- * ou GET /api/stages?email=...
- */
-export const getStagesForStudent = async (req, res) => {
-  try {
-    const email = req.query.email;
-    if (!email) return res.status(400).json({ message: "email requis" });
-
-    const stages = await getStagesByEmail(email);
-    return res.json({ stages });
-  } catch (err) {
-    console.error("getStagesForStudent error:", err);
-    return res.status(500).json({ message: "Erreur serveur" });
-  }
+export const getAllStages = async () => {
+  const [rows] = await db.query(
+    `SELECT s.id, s.entreprise, s.sujet, s.date_debut, s.date_fin, s.statut, u.nom, u.email
+     FROM stages s
+     LEFT JOIN users u ON u.id = s.id_etudiant
+     ORDER BY s.id DESC`
+  );
+  return rows;
 };
 
-/**
- * PUT /api/stages/:id/validate
- */
-export const validateStage = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const existing = await getStageById(id);
-    if (!existing) return res.status(404).json({ message: "Stage introuvable" });
-
-    const stage = await updateStageStatus(id, "valide");
-    return res.json({ stage });
-  } catch (err) {
-    console.error("validateStage error:", err);
-    return res.status(500).json({ message: "Erreur serveur" });
-  }
+export const updateStageStatus = async (id, statut) => {
+  await db.query("UPDATE stages SET statut = ? WHERE id = ?", [statut, id]);
+  const [rows] = await db.query("SELECT * FROM stages WHERE id = ?", [id]);
+  return rows[0];
 };
 
-/**
- * PUT /api/stages/:id/refuse
- */
-export const refuseStage = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const existing = await getStageById(id);
-    if (!existing) return res.status(404).json({ message: "Stage introuvable" });
-
-    const stage = await updateStageStatus(id, "refuse");
-    return res.json({ stage });
-  } catch (err) {
-    console.error("refuseStage error:", err);
-    return res.status(500).json({ message: "Erreur serveur" });
-  }
+export const getStageById = async (id) => {
+  const [rows] = await db.query("SELECT * FROM stages WHERE id = ?", [id]);
+  return rows[0];
 };

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import StatusBadge from "../components/StatusBadge";
+import { getStudentStagesByEmail } from "../services/api";
 
 export default function StudentStatus() {
   const navigate = useNavigate();
@@ -13,23 +14,15 @@ export default function StudentStatus() {
 
   useEffect(() => {
     const load = async () => {
+      setLoading(true);
+      setError("");
       try {
         if (!email) throw new Error("Email manquant.");
 
-        const res = await fetch(
-          `http://localhost:4000/api/stages/student?email=${encodeURIComponent(email)}`
-        );
+        const stages = await getStudentStagesByEmail(email);
+        const stageData = stages?.[0];
 
-        const data = await res.json();
-
-        if (!res.ok) throw new Error(data?.message || "Erreur serveur");
-
-        // ✅ CORRECTION ICI
-        const stageData = data?.stages?.[0];
-
-        if (!stageData) {
-          throw new Error(`Aucune déclaration trouvée pour ${email}`);
-        }
+        if (!stageData) throw new Error(`Aucune déclaration trouvée pour ${email}`);
 
         setStage(stageData);
       } catch (e) {
@@ -70,10 +63,7 @@ export default function StudentStatus() {
         <StatusBadge status={stage.statut} />
       </div>
 
-      <button
-        className="mt-6 underline text-blue-500"
-        onClick={() => navigate("/")}
-      >
+      <button className="mt-6 underline text-blue-500" onClick={() => navigate("/")}>
         Retour à l’accueil
       </button>
     </div>

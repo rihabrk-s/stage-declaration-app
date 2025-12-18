@@ -1,20 +1,34 @@
-// backend/src/controllers/stagesController.js
-import Stage from "../models/Stage.js";
+import { validationResult } from "express-validator";
+import {
+  createStage,
+  getStagesByEmail,
+  getAllStages,
+  updateStageStatus,
+  getStageById,
+} from "../models/Stage.js";
 
-// ✅ Déclarer un stage (statut par défaut = "en_attente")
+import { findOrCreateUser } from "../models/User.js";
+
+// POST /api/stages
 export const declareStage = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
   try {
     const { nom, prenom, email, entreprise, sujet, date_debut, date_fin } = req.body;
 
-    const stage = await Stage.create({
-      nom,
-      prenom,
+    const user = await findOrCreateUser({
+      nom: `${nom} ${prenom || ""}`.trim(),
       email,
+      role: "etudiant",
+    });
+
+    const stage = await createStage({
+      id_etudiant: user.id,
       entreprise,
       sujet,
       date_debut: date_debut || null,
       date_fin: date_fin || null,
-      statut: "en_attente",
     });
 
     return res.status(201).json({ stage });
@@ -24,10 +38,14 @@ export const declareStage = async (req, res) => {
   }
 };
 
-// ✅ Admin : lister tous les stages
+// GET /api/stages (admin) OU /api/stages?email=...
 export const listAllStages = async (req, res) => {
   try {
-    const stages = await Stage.find().sort({ createdAt: -1 });
+    if (req.query.email) {
+      const stages = await getStagesByEmail(req.query.email);
+      return res.json({ stages });
+    }
+    const stages = await getAllStages();
     return res.json({ stages });
   } catch (err) {
     console.error(err);
@@ -35,16 +53,13 @@ export const listAllStages = async (req, res) => {
   }
 };
 
-// ✅ Étudiant : récupérer ses stages par email
-// Supporte 2 formes :
-// - GET /api/stages?email=...
-// - GET /api/stages/student?email=...
+// GET /api/stages/student?email=...
 export const getStagesForStudent = async (req, res) => {
   try {
     const email = req.query.email;
     if (!email) return res.status(400).json({ message: "email requis" });
 
-    const stages = await Stage.find({ email }).sort({ createdAt: -1 });
+    const stages = await getStagesByEmail(email);
     return res.json({ stages });
   } catch (err) {
     console.error(err);
@@ -52,19 +67,13 @@ export const getStagesForStudent = async (req, res) => {
   }
 };
 
-// ✅ Admin : valider un stage
+// PUT /api/stages/:id/validate
 export const validateStage = async (req, res) => {
   try {
-    const { id } = req.params;
+    const existing = await getStageById(req.params.id);
+    if (!existing) return res.status(404).json({ message: "Stage introuvable" });
 
-    const stage = await Stage.findByIdAndUpdate(
-      id,
-      { statut: "valide" },
-      { new: true }
-    );
-
-    if (!stage) return res.status(404).json({ message: "Stage introuvable" });
-
+    const stage = await updateStageStatus(req.params.id, "valide");
     return res.json({ stage });
   } catch (err) {
     console.error(err);
@@ -72,19 +81,13 @@ export const validateStage = async (req, res) => {
   }
 };
 
-// ✅ Admin : refuser un stage
+// PUT /api/stages/:id/refuse
 export const refuseStage = async (req, res) => {
   try {
-    const { id } = req.params;
+    const existing = await getStageById(req.params.id);
+    if (!existing) return res.status(404).json({ message: "Stage introuvable" });
 
-    const stage = await Stage.findByIdAndUpdate(
-      id,
-      { statut: "refuse" },
-      { new: true }
-    );
-
-    if (!stage) return res.status(404).json({ message: "Stage introuvable" });
-
+    const stage = await updateStageStatus(req.params.id, "refuse");
     return res.json({ stage });
   } catch (err) {
     console.error(err);
