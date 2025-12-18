@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function StudentDeclare() {
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
     nom: "",
     prenom: "",
@@ -13,6 +14,7 @@ export default function StudentDeclare() {
     dateDebut: "",
     dateFin: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -31,7 +33,7 @@ export default function StudentDeclare() {
         body: JSON.stringify({
           nom: form.nom,
           prenom: form.prenom,
-          email: form.email, // <-- ajouté
+          email: form.email,
           entreprise: form.entreprise,
           sujet: form.sujet,
           date_debut: form.dateDebut,
@@ -39,12 +41,14 @@ export default function StudentDeclare() {
         }),
       });
 
+      const data = await response.json().catch(() => null);
+
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Impossible de déclarer le stage");
+        throw new Error(data?.message || data?.error || "Impossible de déclarer le stage");
       }
 
-      navigate("/student-status");
+      // ✅ REDIRECTION vers la page statut après déclaration
+      navigate(`/etudiant/statut?email=${encodeURIComponent(form.email)}`);
     } catch (err) {
       setError(err.message);
     } finally {

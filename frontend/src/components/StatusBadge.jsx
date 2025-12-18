@@ -1,13 +1,34 @@
 export default function StatusBadge({ status }) {
-  const map = {
-    "en attente": "bg-yellow-100 text-yellow-800",
-    "validé": "bg-green-100 text-green-800",
-    "refusé": "bg-red-100 text-red-800",
-  };
+  // sécurité : si status est vide
+  if (!status) {
+    return (
+      <span className="inline-block px-3 py-1 rounded-full text-sm bg-gray-200 text-gray-700">
+        Inconnu
+      </span>
+    );
+  }
+
+  const normalized = status.toLowerCase();
+
+  let label = "Inconnu";
+  let classes = "bg-gray-200 text-gray-700";
+
+  if (normalized === "en_attente") {
+    label = "En attente";
+    classes = "bg-yellow-100 text-yellow-800";
+  } else if (normalized === "valide") {
+    label = "Validé";
+    classes = "bg-green-100 text-green-800";
+  } else if (normalized === "refuse") {
+    label = "Refusé";
+    classes = "bg-red-100 text-red-800";
+  }
 
   return (
-    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${map[status]}`}>
-      {status.toUpperCase()}
+    <span
+      className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${classes}`}
+    >
+      {label}
     </span>
   );
 }
