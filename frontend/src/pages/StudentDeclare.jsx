@@ -56,106 +56,339 @@ export default function StudentDeclare() {
     }
   };
 
-  const input =
-    "w-full rounded-xl bg-gray-50 border border-gray-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-200";
-  const label = "block text-sm font-semibold text-gray-800 mb-2";
+  // Styles object
+  const styles = {
+    container: {
+      maxWidth: "600px",
+      margin: "0 auto",
+      padding: "1rem"
+    },
+    
+    errorContainer: {
+      background: "#fef2f2",
+      color: "#dc2626",
+      border: "1px solid #fecaca",
+      padding: "0.875rem 1rem",
+      borderRadius: "0.875rem",
+      marginBottom: "1.5rem",
+      fontSize: "0.875rem",
+      display: "flex",
+      alignItems: "center",
+      gap: "0.5rem"
+    },
+    
+    errorIcon: {
+      fontSize: "1rem",
+      flexShrink: "0"
+    },
+    
+    form: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "1.25rem"
+    },
+    
+    grid: {
+      display: "grid",
+      gridTemplateColumns: "1fr",
+      gap: "1rem"
+    },
+    
+    gridColumns: {
+      gridTemplateColumns: "1fr 1fr"
+    },
+    
+    formGroup: {
+      display: "flex",
+      flexDirection: "column"
+    },
+    
+    label: {
+      display: "block",
+      fontSize: "0.875rem",
+      fontWeight: "600",
+      color: "#374151",
+      marginBottom: "0.5rem"
+    },
+    
+    input: {
+      width: "100%",
+      padding: "0.75rem 1rem",
+      backgroundColor: "#f9fafb",
+      border: "1.5px solid #e5e7eb",
+      borderRadius: "0.75rem",
+      fontSize: "0.875rem",
+      color: "#1f2937",
+      outline: "none",
+      transition: "all 0.2s ease",
+      fontFamily: "inherit"
+    },
+    
+    inputFocus: {
+      borderColor: "#f472b6",
+      backgroundColor: "white",
+      boxShadow: "0 0 0 3px rgba(244, 114, 182, 0.1)"
+    },
+    
+    textarea: {
+      resize: "none",
+      minHeight: "100px",
+      lineHeight: "1.5"
+    },
+    
+    inputHover: {
+      borderColor: "#d1d5db"
+    },
+    
+    submitButton: {
+      width: "100%",
+      padding: "0.875rem",
+      background: "linear-gradient(135deg, #db2777 0%, #f472b6 100%)",
+      color: "white",
+      border: "none",
+      borderRadius: "0.75rem",
+      fontSize: "0.875rem",
+      fontWeight: "600",
+      cursor: "pointer",
+      transition: "all 0.3s ease",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "0.5rem",
+      marginTop: "0.5rem"
+    },
+    
+    submitButtonHover: {
+      transform: "translateY(-2px)",
+      boxShadow: "0 6px 20px rgba(219, 39, 119, 0.3)"
+    },
+    
+    submitButtonDisabled: {
+      opacity: "0.6",
+      cursor: "not-allowed",
+      transform: "none !important",
+      boxShadow: "none !important"
+    },
+    
+    backButton: {
+      background: "none",
+      border: "none",
+      color: "#6b7280",
+      fontSize: "0.875rem",
+      fontWeight: "600",
+      cursor: "pointer",
+      transition: "color 0.2s ease",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "0.25rem",
+      padding: "0",
+      marginTop: "0.5rem"
+    },
+    
+    backButtonHover: {
+      color: "#374151"
+    },
+    
+    backIcon: {
+      fontSize: "1rem"
+    },
+    
+    loadingSpinner: {
+      width: "1rem",
+      height: "1rem",
+      border: "2px solid rgba(255, 255, 255, 0.3)",
+      borderTopColor: "white",
+      borderRadius: "50%",
+      animation: "spin 1s linear infinite"
+    },
+    
+    // Responsive styles
+    responsive: {
+      "@media (min-width: 768px)": {
+        grid: {
+          gridTemplateColumns: "1fr 1fr"
+        }
+      }
+    }
+  };
+
+  // Helper function to merge styles
+  const mergeStyles = (base, additional) => ({
+    ...base,
+    ...additional
+  });
 
   return (
-    <div>
+    <div style={styles.container}>
+      {/* Add animation styles */}
+      <style>
+        {`
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `}
+      </style>
+      
       {error && (
-        <div className="bg-red-50 text-red-700 border border-red-100 p-3 rounded-xl mb-5 text-sm">
+        <div style={styles.errorContainer}>
+          <span style={styles.errorIcon}>⚠️</span>
           {error}
         </div>
       )}
 
-      <form className="space-y-5" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className={label}>Nom</label>
+      <form 
+        style={styles.form} 
+        onSubmit={handleSubmit}
+        onFocus={(e) => {
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            e.target.style.borderColor = styles.inputFocus.borderColor;
+            e.target.style.backgroundColor = styles.inputFocus.backgroundColor;
+            e.target.style.boxShadow = styles.inputFocus.boxShadow;
+          }
+        }}
+        onBlur={(e) => {
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            e.target.style.borderColor = styles.input.border;
+            e.target.style.backgroundColor = styles.input.backgroundColor;
+            e.target.style.boxShadow = 'none';
+          }
+        }}
+      >
+        <div style={mergeStyles(styles.grid, { 
+          ...(window.innerWidth >= 768 && styles.gridColumns)
+        })}>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Nom</label>
             <input
-              className={input}
+              style={styles.input}
               type="text"
               name="nom"
               value={form.nom}
               onChange={handleChange}
               placeholder="Jean"
               required
+              onMouseEnter={(e) => e.target.style.borderColor = styles.inputHover.borderColor}
+              onMouseLeave={(e) => {
+                if (e.target !== document.activeElement) {
+                  e.target.style.borderColor = styles.input.border;
+                }
+              }}
             />
           </div>
-          <div>
-            <label className={label}>Prénom</label>
+          
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Prénom</label>
             <input
-              className={input}
+              style={styles.input}
               type="text"
               name="prenom"
               value={form.prenom}
               onChange={handleChange}
               placeholder="Dupont"
               required
+              onMouseEnter={(e) => e.target.style.borderColor = styles.inputHover.borderColor}
+              onMouseLeave={(e) => {
+                if (e.target !== document.activeElement) {
+                  e.target.style.borderColor = styles.input.border;
+                }
+              }}
             />
           </div>
         </div>
 
-        <div>
-          <label className={label}>Email</label>
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Email</label>
           <input
-            className={input}
+            style={styles.input}
             type="email"
             name="email"
             value={form.email}
             onChange={handleChange}
             placeholder="jean.dupont@exemple.com"
             required
+            onMouseEnter={(e) => e.target.style.borderColor = styles.inputHover.borderColor}
+            onMouseLeave={(e) => {
+              if (e.target !== document.activeElement) {
+                e.target.style.borderColor = styles.input.border;
+              }
+            }}
           />
         </div>
 
-        <div>
-          <label className={label}>Entreprise</label>
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Entreprise</label>
           <input
-            className={input}
+            style={styles.input}
             type="text"
             name="entreprise"
             value={form.entreprise}
             onChange={handleChange}
             placeholder="Nom de l'entreprise"
             required
+            onMouseEnter={(e) => e.target.style.borderColor = styles.inputHover.borderColor}
+            onMouseLeave={(e) => {
+              if (e.target !== document.activeElement) {
+                e.target.style.borderColor = styles.input.border;
+              }
+            }}
           />
         </div>
 
-        <div>
-          <label className={label}>Sujet du stage</label>
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Sujet du stage</label>
           <textarea
-            className={`${input} resize-none`}
+            style={mergeStyles(styles.input, styles.textarea)}
             name="sujet"
             value={form.sujet}
             onChange={handleChange}
             placeholder="Description du sujet du stage"
             rows={3}
             required
+            onMouseEnter={(e) => e.target.style.borderColor = styles.inputHover.borderColor}
+            onMouseLeave={(e) => {
+              if (e.target !== document.activeElement) {
+                e.target.style.borderColor = styles.input.border;
+              }
+            }}
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className={label}>Date de début</label>
+        <div style={mergeStyles(styles.grid, { 
+          ...(window.innerWidth >= 768 && styles.gridColumns)
+        })}>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Date de début</label>
             <input
-              className={input}
+              style={styles.input}
               type="date"
               name="dateDebut"
               value={form.dateDebut}
               onChange={handleChange}
               required
+              onMouseEnter={(e) => e.target.style.borderColor = styles.inputHover.borderColor}
+              onMouseLeave={(e) => {
+                if (e.target !== document.activeElement) {
+                  e.target.style.borderColor = styles.input.border;
+                }
+              }}
             />
           </div>
-          <div>
-            <label className={label}>Date de fin</label>
+          
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Date de fin</label>
             <input
-              className={input}
+              style={styles.input}
               type="date"
               name="dateFin"
               value={form.dateFin}
               onChange={handleChange}
               required
+              onMouseEnter={(e) => e.target.style.borderColor = styles.inputHover.borderColor}
+              onMouseLeave={(e) => {
+                if (e.target !== document.activeElement) {
+                  e.target.style.borderColor = styles.input.border;
+                }
+              }}
             />
           </div>
         </div>
@@ -163,17 +396,42 @@ export default function StudentDeclare() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl py-3 font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60"
+          style={mergeStyles(
+            styles.submitButton,
+            loading && styles.submitButtonDisabled
+          )}
+          onMouseEnter={(e) => {
+            if (!loading) {
+              e.currentTarget.style.transform = styles.submitButtonHover.transform;
+              e.currentTarget.style.boxShadow = styles.submitButtonHover.boxShadow;
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!loading) {
+              e.currentTarget.style.transform = "none";
+              e.currentTarget.style.boxShadow = "none";
+            }
+          }}
         >
-          {loading ? "Envoi..." : "Déclarer le stage"}
+          {loading ? (
+            <>
+              <div style={styles.loadingSpinner}></div>
+              Envoi en cours...
+            </>
+          ) : (
+            "Déclarer le stage"
+          )}
         </button>
 
         <button
           type="button"
           onClick={() => navigate("/")}
-          className="text-sm font-semibold text-gray-600 hover:text-gray-900"
+          style={styles.backButton}
+          onMouseEnter={(e) => e.currentTarget.style.color = styles.backButtonHover.color}
+          onMouseLeave={(e) => e.currentTarget.style.color = styles.backButton.color}
         >
-          ← Retour à l’accueil
+          <span style={styles.backIcon}>←</span>
+          Retour à l'accueil
         </button>
       </form>
     </div>
