@@ -1,5 +1,6 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
+
 dotenv.config();
 
 const db = mysql.createPool({
@@ -13,8 +14,12 @@ const db = mysql.createPool({
   queueLimit: 0,
 });
 
+// ✅ Test de connexion (utile en dev)
 db.getConnection()
-  .then(() => console.log("Connecté à la base MySQL !"))
+  .then((conn) => {
+    console.log("Connecté à la base MySQL !");
+    conn.release();
+  })
   .catch((err) => {
     console.error("Erreur de connexion à MySQL :", err);
     process.exit(1);
