@@ -7,6 +7,7 @@ const Home = () => {
 
   const activeTab = useMemo(() => {
     if (location.pathname.startsWith("/admin")) return "admin";
+    if (location.pathname.startsWith("/etudiant/recherche-ia")) return "ai";
     return "student";
   }, [location.pathname]);
 
@@ -252,8 +253,22 @@ const Home = () => {
       boxShadow: "0 0 10px rgba(219, 39, 119, 0.3)"
     },
     
+    accentBarAI: {
+      background: "linear-gradient(180deg, #7c3aed 0%, #db2777 100%)",
+      boxShadow: "0 0 10px rgba(124, 58, 237, 0.25)"
+    },
+    
     accentBarAdmin: {
       background: "linear-gradient(180deg, #374151 0%, #111827 100%)"
+    },
+    
+    userBadgeAI: {
+      background: "#f5d0fe",
+      color: "#7c3aed"
+    },
+    
+    aiTabActive: {
+      background: "linear-gradient(135deg, #7c3aed 0%, #db2777 100%)"
     },
     
     headerDetails: {
@@ -305,7 +320,7 @@ const Home = () => {
       background: "linear-gradient(180deg, #ffffff 0%, #fdf2f8 100%)"
     },
     
-    contentWrapper: {
+    cardInnerWrapper: {
       maxWidth: "64rem",
       margin: "0 auto",
       position: "relative"
@@ -561,6 +576,46 @@ const Home = () => {
 
             <button
               type="button"
+              onClick={() => navigate("/etudiant/recherche-ia")}
+              style={mergeStyles(
+                styles.tabButton,
+                activeTab === "ai"
+                  ? mergeStyles(styles.tabButtonActive, styles.aiTabActive)
+                  : styles.tabButtonInactive
+              )}
+              onMouseEnter={(e) => {
+                if (activeTab !== "ai") {
+                  e.currentTarget.style.background = styles.tabButtonInactiveHover.background;
+                  e.currentTarget.style.color = styles.tabButtonInactiveHover.color;
+                  e.currentTarget.style.border = styles.tabButtonInactiveHover.border;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== "ai") {
+                  e.currentTarget.style.background = styles.tabButtonInactive.background;
+                  e.currentTarget.style.color = styles.tabButtonInactive.color;
+                  e.currentTarget.style.border = "none";
+                }
+              }}
+            >
+              <span 
+                style={mergeStyles(
+                  styles.tabIcon,
+                  activeTab === "ai" && styles.tabIconActive
+                )}
+              >
+                🔍
+              </span>
+              <span style={styles.tabLabel}>
+                Recherche IA
+                {activeTab === "ai" && (
+                  <span style={styles.activeIndicator}></span>
+                )}
+              </span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => navigate("/admin/stages")}
               style={mergeStyles(
                 styles.tabButton,
@@ -612,24 +667,42 @@ const Home = () => {
             <div style={styles.headerContent}>
               <div style={mergeStyles(
                 styles.accentBar,
-                activeTab === "admin" ? styles.accentBarAdmin : styles.accentBarStudent
+                activeTab === "admin"
+                  ? styles.accentBarAdmin
+                  : activeTab === "ai"
+                  ? styles.accentBarAI
+                  : styles.accentBarStudent
               )}></div>
               <div style={styles.headerDetails}>
                 <div style={styles.headerTitleSection}>
                   <h2 style={styles.cardTitle}>
-                    {activeTab === "admin" ? "Espace Administration" : "Déclarer un stage"}
+                    {activeTab === "admin"
+                      ? "Espace Administration"
+                      : activeTab === "ai"
+                      ? "Recherche IA des stages"
+                      : "Déclarer un stage"}
                   </h2>
                   <p style={styles.cardSubtitle}>
                     {activeTab === "admin"
                       ? "Consultez, gérez et validez les déclarations de stage des étudiants."
+                      : activeTab === "ai"
+                      ? "Posez une question libre pour retrouver les stages les plus pertinents selon votre description."
                       : "Remplissez le formulaire ci-dessous pour déclarer votre nouveau stage."}
                   </p>
                 </div>
                 <div style={mergeStyles(
                   styles.userBadge,
-                  activeTab === "admin" ? styles.userBadgeAdmin : styles.userBadgeStudent
+                  activeTab === "admin"
+                    ? styles.userBadgeAdmin
+                    : activeTab === "ai"
+                    ? styles.userBadgeAI
+                    : styles.userBadgeStudent
                 )}>
-                  {activeTab === "admin" ? "Administrateur" : "Étudiant"}
+                  {activeTab === "admin"
+                    ? "Administrateur"
+                    : activeTab === "ai"
+                    ? "Recherche IA"
+                    : "Étudiant"}
                 </div>
               </div>
             </div>
@@ -637,7 +710,7 @@ const Home = () => {
 
           {/* Content Area */}
           <div style={styles.contentArea}>
-            <div style={styles.contentWrapper}>
+            <div style={styles.cardInnerWrapper}>
               {/* Decorative corner accents */}
               <div style={mergeStyles(styles.cornerAccent, styles.cornerTopLeft)}></div>
               <div style={mergeStyles(styles.cornerAccent, styles.cornerTopRight)}></div>
@@ -656,13 +729,15 @@ const Home = () => {
                 <span style={styles.statusText}>
                   {activeTab === "admin"
                     ? "Sécurité : accès restreint aux administrateurs"
+                    : activeTab === "ai"
+                    ? "Accès IA sécurisé et prêt à répondre"
                     : "Vos données sont protégées et chiffrées"}
                 </span>
               </div>
               <div style={styles.timeEstimation}>
                 <span style={styles.timeIcon}>🕒</span>
                 <span style={styles.timeText}>
-                  Temps estimé : {activeTab === "admin" ? "3-5 min" : "10-15 min"}
+                  Temps estimé : {activeTab === "admin" ? "3-5 min" : activeTab === "ai" ? "1-2 min" : "10-15 min"}
                 </span>
               </div>
             </div>

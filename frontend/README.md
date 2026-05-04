@@ -14,3 +14,23 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## Démarrage du projet
+
+1. Lancez le service FastAPI IA sur `http://localhost:8000`.
+2. Dans le dossier `frontend`, installez les dépendances si nécessaire :
+
+```bash
+cd frontend
+npm install
+```
+
+3. Démarrez le frontend React :
+
+```bash
+npm run dev
+```
+
+4. Ouvrez le navigateur sur `http://localhost:5173`.
+
+Le nouvel onglet de recherche IA est disponible via "Recherche IA" dans l'application.

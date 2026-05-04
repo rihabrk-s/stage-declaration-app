@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import StudentDeclare from "./pages/StudentDeclare";
 import StudentStatus from "./pages/StudentStatus";
 import AdminStages from "./pages/AdminStages";
+import StageAISearch from "./components/StageAISearch";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
 
           {/* Contenu affiché dans <Outlet /> */}
           <Route path="etudiant/declaration" element={<StudentDeclare />} />
+          <Route path="etudiant/recherche-ia" element={<StageAISearch />} />
           <Route path="admin/stages" element={<AdminStages />} />
         </Route>
 
