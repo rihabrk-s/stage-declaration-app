@@ -1,0 +1,34 @@
+Préparation d'un Entretien pour Stage
+
+Les entretiens pour stages sont souvent moins formels que ceux pour emplois permanents, mais ils restent importants pour évaluer l'adéquation candidat-entreprise.
+
+Préparation Générale :
+1. Recherche sur l'entreprise : site web, actualités, culture d'entreprise
+2. Revue de son CV : anticiper les questions sur expériences passées
+3. Préparation de questions : montrer l'intérêt pour le poste et l'entreprise
+
+Questions Courantes :
+- "Parlez-moi de vous"
+- "Pourquoi voulez-vous faire un stage chez nous ?"
+- "Quelles sont vos forces et faiblesses ?"
+- "Décrivez un projet dont vous êtes fier"
+- "Où vous voyez-vous dans 5 ans ?"
+
+Questions Techniques (pour postes tech) :
+- Algorithmes et structures de données
+- Problèmes de logique
+- Questions sur les technologies mentionnées dans le CV
+- Exercices de codage en direct
+
+Conseils pour Réussir :
+- Soyez ponctuel et bien habillé
+- Montrez de l'enthousiasme
+- Préparez des exemples concrets (STAR method)
+- Posez des questions pertinentes
+- Suivez-up par email dans les 24h
+
+Pour les Startups Technologiques :
+- Intérêt pour l'innovation et l'agilité
+- Compréhension des challenges des jeunes entreprises
+- Motivation pour l'apprentissage rapide
+- Capacité d'adaptation au changement

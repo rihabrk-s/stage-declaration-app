@@ -1,0 +1,26 @@
+Guide des Stages en Data Science
+
+Les stages en data science sont de plus en plus populaires auprès des étudiants en informatique, mathématiques et statistiques. Voici un aperçu des compétences requises et des opportunités.
+
+Compétences Techniques Essentielles :
+- Programmation : Python, R, SQL
+- Analyse de données : Pandas, NumPy, Scikit-learn
+- Visualisation : Matplotlib, Seaborn, Tableau
+- Machine Learning : algorithmes de classification, régression
+- Big Data : Hadoop, Spark (optionnel pour débutants)
+
+Compétences Non-Techniques :
+- Résolution de problèmes
+- Communication
+- Travail en équipe
+- Curiosité intellectuelle
+
+Durée Moyenne : 4-6 mois pour les stages de fin d'études.
+
+Salaire : Variable selon l'entreprise, souvent 800-1500€/mois en France.
+
+Conseils pour Postuler :
+- Portfolio GitHub avec projets personnels
+- Certifications en ligne (Coursera, edX)
+- Lettre de motivation personnalisée
+- Préparation aux entretiens techniques
